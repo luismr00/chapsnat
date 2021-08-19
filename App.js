@@ -9,16 +9,23 @@ import SignupScreen from "./screens/SignupScreen";
 import BottomTabNavigator from "./navigation/BottomTabNavigator";
 import firebase from "@firebase/app";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
+
 const Stack = createStackNavigator();
+
 function App() {
+  
   const [isSignedIn, setIsSignedIn] = useState(
     firebase.auth().currentUser ? true : false
   );
+  
+  
   useEffect(() => {
     return firebase.auth().onAuthStateChanged((user) => {
       setIsSignedIn(user ? true : false);
     });
   }, []);
+  
+  
   return (
     <ActionSheetProvider>
       <View style={styles.container}>

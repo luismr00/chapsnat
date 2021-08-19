@@ -1,6 +1,7 @@
 import firebase from "@firebase/app";
 import React, { useState } from "react";
 import Colors from "../constants/Colors";
+import { Ionicons } from "@expo/vector-icons";
 import {
   Image,
   StyleSheet,
@@ -8,13 +9,17 @@ import {
   View,
   TouchableOpacity,
   Platform,
+  Modal,
+  TextInput,
 } from "react-native";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import * as ImagePicker from "expo-image-picker";
 export default function ProfileScreen() {
-  const { showActionSheetWithOptions } = useActionSheet();
-  const [imageURI, setImageURI] = useState(null);
   var user = firebase.auth().currentUser;
+  const { showActionSheetWithOptions } = useActionSheet();
+  const [imageURI, setImageURI] = useState(user ? user.photoURL : "");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [displayName, setDisplayName] = useState(user ? user.displayName : "");
   const onPressLogout = async () => {
     await firebase
       .auth()
@@ -27,6 +32,22 @@ export default function ProfileScreen() {
         // An error happened.
         alert(error.message);
       });
+  };
+  const onEditAvatar = () => {
+    showActionSheetWithOptions(
+      {
+        options: ["Camera", "Image Library", "Cancel"],
+        cancelButtonIndex: 2,
+      },
+      (buttonIndex) => {
+        if (buttonIndex == 0) {
+          handleCamera();
+        } else if (buttonIndex == 1) {
+          handleLibrary();
+        }
+        console.log(buttonIndex);
+      }
+    );
   };
   const handleCamera = async () => {
     if (Platform.OS !== "web") {
@@ -44,25 +65,58 @@ export default function ProfileScreen() {
       quality: 0.5,
     });
     if (!result.cancelled) {
-      console.log(result.uri);
+      console.log(result);
       setImageURI(result.uri);
+      uploadAndUpdateAvatar(result.uri);
     }
   };
-  const onEditAvatar = () => {
-    showActionSheetWithOptions(
-      {
-        options: ["Camera", "Image Library", "Cancel"],
-        cancelButtonIndex: 2,
-      },
-      (buttonIndex) => {
-        console.log(buttonIndex);
-        if (buttonIndex === 0) {
-          handleCamera();
-        } else if (buttonIndex === 1) {
-        } else if (buttonIndex === 2) {
+  const handleLibrary = async () => {
+    if (Platform.OS !== "web") {
+      let permissions = await ImagePicker.getMediaLibraryPermissionsAsync();
+      if (!permissions.granted) {
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          alert("Sorry, we need media library to make this work!");
         }
       }
-    );
+    }
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+    });
+    if (!result.cancelled) {
+      console.log(result);
+      setImageURI(result.uri);
+      uploadAndUpdateAvatar(result.uri);
+    }
+  };
+  const uploadAndUpdateAvatar = async (imageURI) => {
+    try {
+      const filename = imageURI.substring(imageURI.lastIndexOf("/") + 1);
+      const response = await fetch(imageURI);
+      const blob = await response.blob();
+      const uploadTask = firebase
+        .storage()
+        .ref(user.uid + "/" + filename) // unique path
+        .put(blob);
+      // set progress state
+      uploadTask.on("state_changed", (snapshot) => {
+        // Can keep track of upload progress here
+        // setTransferred(
+        //   Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
+        // );
+      });
+      await uploadTask;
+      let downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+      console.log(downloadURL);
+      user.updateProfile({
+        photoURL: downloadURL,
+      });
+    } catch (e) {
+      console.error(e);
+    }
   };
   return (
     <View style={styles.container}>
@@ -72,7 +126,21 @@ export default function ProfileScreen() {
             <TouchableOpacity onPress={onEditAvatar}>
               <Image style={styles.userImage} source={{ uri: imageURI }} />
             </TouchableOpacity>
-            <Text style={styles.userNameText}>{user.displayName}</Text>
+            <View style={styles.Row}>
+              <Text style={styles.userNameText}>{displayName}</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(true);
+                }}
+              >
+                <Ionicons
+                  name={"create-outline"}
+                  size={25}
+                  style={{ marginBottom: 5, marginLeft: 3 }}
+                  color={Colors.tabIconDefault}
+                />
+              </TouchableOpacity>
+            </View>
             <View style={styles.Row}>
               <Text style={styles.descriptionText}>{user.email}</Text>
             </View>
@@ -85,11 +153,62 @@ export default function ProfileScreen() {
               <Text style={styles.logoutText}>Logout</Text>
             </TouchableOpacity>
           </View>
+          <EditModal
+            setModalVisible={setModalVisible}
+            modalVisible={modalVisible}
+            setDisplayName={setDisplayName}
+          ></EditModal>
         </>
       ) : (
         <View></View>
       )}
     </View>
+  );
+}
+function EditModal(props) {
+  const [newName, setNewName] = useState("");
+  const onPressSaveNewName = async () => {
+    props.setModalVisible(false);
+    const user = firebase.auth().currentUser;
+    await user
+      .updateProfile({ displayName: newName })
+      .then(() => {
+        console.log("Updated display name!");
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+    props.setDisplayName(newName);
+  };
+  return (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={props.modalVisible}
+      onRequestClose={() => {
+        Alert.alert("Modal has been closed.");
+      }}
+    >
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <Text style={styles.modalText}>Change your name:</Text>
+          <TextInput autoFocus={true} onChangeText={setNewName} />
+          <TouchableOpacity
+            style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+            onPress={onPressSaveNewName}
+          >
+            <Text style={styles.textStyle}>Save New Name</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              props.setModalVisible(!props.modalVisible);
+            }}
+          >
+            <Text style={styles.cancelText}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
   );
 }
 const styles = StyleSheet.create({
@@ -102,6 +221,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     paddingBottom: 20,
     paddingTop: 45,
+    justifyContent: "center",
   },
   Row: {
     alignItems: "center",
@@ -145,5 +265,41 @@ const styles = StyleSheet.create({
   logoutText: {
     color: "white",
     fontWeight: "bold",
+  },
+  modalView: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 50,
+    marginTop: 300,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  openButton: {
+    backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    margin: 20,
+    elevation: 2,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  cancelText: {
+    color: "black",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
   },
 });
