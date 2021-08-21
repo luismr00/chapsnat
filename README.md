@@ -2,9 +2,7 @@
 
 # Introduction
 
-Snap Nourish is a Snap Academy final project which goal was to create a new feature as if it were to be added towards the Snapchat app itself. Beforehand, different teams of six scholars were made throughout the academy where each team had to focus on a seperate topic upon creating the new feature. Each team was composed of two scholars from each different Snap Academy which consisted of two engineers, two designers, and two storytellers. Together the whole project was group effort in creating Snap Nourish. Please note that the final outcome of the project, however, is only a prototype itself and not necessarily a final product.
-
-As for the purpose of the feature, the project's objective was to bring awareness to Snap users about food security, educate them on healthier food choices through recipes, and provide a resource by giving them local groceries with the most affordable deals (bring awareness, educate, and provide resources). Snap has always been a company that cares for the wellbeing of their users. With the new feature, it promotes food security awareness and incorporates all of Snaps values of Smart, Kind, and Creative. By adding on to the geolocation feature we are strengthening the existing communities by helping people become food secure and increasing the usage of other established features, such as Snap Stories.
+Chapsnat is a...
 
 [Click here](https://drive.google.com/file/d/15b2CJ6q6WsKxXzptSPjXvsfQbYBOuj0x/view?usp=sharing) to watch our video.
 
