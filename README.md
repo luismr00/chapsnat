@@ -2,37 +2,13 @@
 
 # Introduction
 
-Chapsnat is a...
-
-[Click here](https://drive.google.com/file/d/15b2CJ6q6WsKxXzptSPjXvsfQbYBOuj0x/view?usp=sharing) to watch our video.
+Chapsnat is a mockup app which intent was to resemble the actual snapchat app to give scholars a better idea how it is built. The project is built in React Native, and also uses an external chat library and firebase database for it to have the ability to send and receive messages from different users. 
 
 # Main Features
 
-## Snap Nourish Maps 
-
-The following functionality is complete for the Map Screen:
-
-* [x] Various grocery stores, food pantries, and community fridges mapped out in Boyle Heights.
-* [x] Users can click on the icons and it will navigate them to a new screen where it shows multiple information the selected store has to offer. 
-* [x] Locations are hard coded at the moment but with an API the feature would map over several locations if the data were to be provided by sponsoring stores partnering with Snap. 
-
-<!-- <img src="https://i.imgur.com/agSvcgL.gif" width=200><br> -->
-<p align="center">
-  <img width="380" src="./assets/GIFsamQT.gif">
-</p>
-
-
-## Snap Nourish Grocery Store View 
-
-The following functionality is complete for the Store Screen:
-
-* [x] Different interfaces that a user can navigate through to find out more resources about the grocery store being clicked from the map screen. 
-* [x] Buttons that allow users to navigate different interfaces. Currently only the resource, meals, and recipe buttons are functional at the moment.  
-* [x] The presented data that the user is able to observe comes from a database called firebase. More info about a given grocery store would be expanded if an api would have been possible to use.   
-
-<p align="center">
-  <img width="380" src="./assets/GIFluisQT.gif">
-</p>
+* [x] A friends tab navigation that allows users to create a chat room while also being able to choose which users are allowed to join.
+* [x] A chat tab navigation where users can see and select rooms available where they can go in and chat with others. 
+* [x] A profile navigation tab where users can make changes to their profile, such as changing their profile image and name. Users can also sign out which immediately takes them back to the register/sign in screen. 
 
 # Installation & Setup
 
@@ -55,7 +31,7 @@ expo start
 ```
 
 2. Open the camera of your phone and scan the barcode from the link that opens immediately into your browser after running the command above. This should take you towards the Expo app to be able to view the project within your phone. 
-3. Wait until Expo loads the project entirely. Then, register within the app and navigate to the map screen to see our added features.
+3. Wait until Expo loads the project entirely. Then, register within the app and you'll find a tab bar icon below that will allow you to navigate towards the different main features from the app.
 
 # Technologies Used
 
@@ -63,19 +39,8 @@ expo start
 - [Expo](https://docs.expo.dev/index.html)
 - [FireBase](https://firebase.google.com/docs)
 
-# Project Team Members 
-
-| Name / Role      | Link to GitHub / LinkedIn |
-| ----------- | ----------- |
-| Luis Rangel  / Engineer      | [LinkedIn](https://www.youtube.com/watch?v=dQw4w9WgXcQ) / [GitHub](https://github.com/luismr00)     |
-| Samantha Soto / Engineer     | [LinkedIn](https://www.linkedin.com/in/samantha-soto-alejos/) / [GitHub](https://github.com/ssotoale)     |
-| Lexie Williamson / Designer  | [LinkedIn](https://www.linkedin.com/in/lexiejwilliamson/)       |
-| Fecilia Mesadieu / Designer  | [LinkedIn](https://www.linkedin.com/in/feliciamesadieu/)       |
-| Nayeli Montano/ Story Teller | [LinkedIn](https://www.linkedin.com/in/nayeli-montano/)       |
-| Anna Garcia / Story Teller   | [LinkedIn](https://www.linkedin.com/in/annangarcia/)       |
 
 #  Acknowledgements
 
-- [ChapSnat Template](https://github.com/Snap-Engineering-Academy-2021/chapsnat-sandbox)
 - [React Native Gifted Chat](https://github.com/FaridSafi/react-native-gifted-chat)
 
